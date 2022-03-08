@@ -2,7 +2,7 @@ terraform {
 
     backend "gcs" {
 
-    credentials = "/home/wlados/.gcp/terraform.json"
+#    credentials = "/home/wlados/.gcp/terraform.json"
     
     bucket  = "ssita"
     prefix  = "terraform/terraform.tfstate"
@@ -11,7 +11,7 @@ terraform {
 
 provider "google" {
 
-    credentials = "/home/wlados/.gcp/terraform.json"
+#    credentials = "/home/wlados/.gcp/terraform.json"
 
     project = "helical-history-342218"
     region  = "us-central1"
@@ -48,7 +48,6 @@ resource "google_compute_instance" "instance_server" {
     }
 
     metadata = {
-        #ssh-keys = "${var.ssh_admin}:${file(var.ssh_server_file_pub)}"
         ssh-keys = "${var.ssh_admin}:${data.google_storage_bucket_object_content.key_server.content}"
     }    
 }
@@ -90,7 +89,6 @@ resource "google_compute_instance" "instance_db" {
     }
 
     metadata = {
-        #ssh-keys = "${var.ssh_admin}:${file(var.ssh_db_file_pub)}"
         ssh-keys = "${var.ssh_admin}:${data.google_storage_bucket_object_content.key_db.content}"
     }     
 }
