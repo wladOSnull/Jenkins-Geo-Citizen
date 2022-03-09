@@ -129,7 +129,7 @@ resource "google_compute_firewall" "firewall_server_db" {
 ### Values printing
 ##################################################
 
-### IPs
+### server IPs
 output "server-external-ip" {
     value = google_compute_instance.instance_server.network_interface.0.access_config.0.nat_ip
 }
@@ -138,6 +138,7 @@ output "server-internal-ip" {
     value = google_compute_instance.instance_server.network_interface.0.network_ip
 }
 
+### db IPs
 output "db-external-ip" {
     value = google_compute_instance.instance_db.network_interface.0.access_config.0.nat_ip
 }
