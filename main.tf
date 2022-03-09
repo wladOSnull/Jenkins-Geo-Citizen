@@ -124,7 +124,6 @@ resource "google_compute_firewall" "firewall_server_db" {
 		protocol = "tcp"
 		ports = ["22"]
 	}
-
 }
 
 ### Values
