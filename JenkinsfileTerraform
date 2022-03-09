@@ -1,0 +1,59 @@
+pipeline {
+    
+    agent any
+
+    stages {
+        
+        stage('Slack initial message') {
+            steps {
+                slackSend color: 'good', message: "> *Start pipeline*: ${BUILD_TAG}"
+            }
+        }
+        
+        stage('Terraform repository checkout') {
+            steps {
+                slackSend color: 'good', message: "Terraform checkout ..."
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/wladOSnull/Terraform-Geo-Citizen']]])
+            }
+        }
+        
+        stage('Terraform init') {
+            steps {
+                sh ("terraform init");
+                sh ("terraform validate");
+            }
+        }
+        
+        stage('Terraform action') {
+            steps {
+                echo "Terraform pipeline actions is: terraform ${tfaction}"
+                slackSend color: 'warning', message: "Terraform action: ${tfaction}"
+                sh ("terraform ${tfaction} --auto-approve");
+            }
+        }
+        
+        stage('Slack post message') {
+            
+            environment {
+                IP = sh (
+                        script: "terraform output -raw server-external-ip", 
+                        returnStdout: true
+                        ).trim()
+            }
+            
+            steps {
+                slackSend color: 'warning', message: "Terraform result:"
+                slackSend color: 'good', message: "Geo Citizen server: ${IP}"
+                slackSend color: 'good', message: "${currentBuild.durationString}"
+                slackSend color: 'good', message: "${currentBuild.currentResult}"
+            }
+        }
+        
+        stage('Slack final message') {
+            steps {
+                slackSend color: 'good', message: '> *End pipeline*'
+            }
+        }        
+        
+    }
+}
