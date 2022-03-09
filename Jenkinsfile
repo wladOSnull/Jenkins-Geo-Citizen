@@ -48,7 +48,7 @@ pipeline {
                 slackSend color: 'good', message: "Geo Citizen server: ${IP}:8080/citizen"
                 slackSend color: 'good', message: "${currentBuild.durationString}"
                 slackSend color: 'good', message: "${currentBuild.currentResult}"
-            }            
+            }         
         }
         
         stage('Slack final message') {
