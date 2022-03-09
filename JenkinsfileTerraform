@@ -53,7 +53,7 @@ pipeline {
             steps {
                 slackSend color: 'good', message: '> *End pipeline*'
             }
-        }        
+        }      
         
     }
 }
