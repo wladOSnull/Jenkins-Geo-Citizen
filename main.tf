@@ -126,7 +126,7 @@ resource "google_compute_firewall" "firewall_server_db" {
 	}
 }
 
-### Values
+### Values printing
 ##################################################
 
 ### IPs
