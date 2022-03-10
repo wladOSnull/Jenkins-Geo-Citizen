@@ -34,7 +34,7 @@ pipeline {
         }
         
         stage('Geo Citizen results') {
-            
+    
             environment {
                 IP = sh (
                         script: "terraform output -raw server-external-ip", 
