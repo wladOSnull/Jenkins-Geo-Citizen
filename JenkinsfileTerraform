@@ -41,18 +41,17 @@ pipeline {
 
         stage('Slack IP message') {
 
+            environment {
+                IP = sh (
+                        script: "terraform output -raw server-external-ip", 
+                        returnStdout: true
+                        ).trim()
+            }
+
             when {
                 expression { tfaction ==~ /(apply)/ }
             }
             steps {
-
-                environment {
-                    IP = sh (
-                            script: "terraform output -raw server-external-ip", 
-                            returnStdout: true
-                            ).trim()
-                }
-
                 slackSend color: 'good', message: "Geo Citizen server: ${IP}"
             }
         }
