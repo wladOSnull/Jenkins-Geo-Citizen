@@ -32,11 +32,14 @@ pipeline {
             }
         }
 
-        stage('Slack post message') {
+        stage('Slack result message') {
             
             steps {
                 slackSend color: 'warning', message: "Terraform result:"                
             }
+        }        
+
+        stage('Slack IP message') {
 
             when {
                 expression { tfaction ==~ /(apply)/ }
@@ -54,7 +57,7 @@ pipeline {
             }
         }
  
-        stage('Slack final message') {
+        stage('Slack result detail message') {
             steps {
                 slackSend color: 'good', message: "${currentBuild.durationString}"
                 slackSend color: 'good', message: "${currentBuild.currentResult}"                
