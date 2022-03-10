@@ -48,7 +48,7 @@ pipeline {
                 slackSend color: 'good', message: "${currentBuild.currentResult}"
             }
         }
-        
+ 
         stage('Slack final message') {
             steps {
                 slackSend color: 'good', message: '> *End pipeline*'
