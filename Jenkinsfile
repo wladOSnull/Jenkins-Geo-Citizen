@@ -3,7 +3,7 @@ pipeline {
     agent any
 
     stages {
-        
+
         stage('Slack initial message') {
             steps {
                 slackSend color: 'good', message: "> *Start pipeline*: ${BUILD_TAG}"
