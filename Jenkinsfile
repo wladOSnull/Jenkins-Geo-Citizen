@@ -25,7 +25,7 @@ pipeline {
                 sh ("terraform apply --auto-approve");
             }
         }
-        
+
         stage('AWX configuration') {
             steps {
                 slackSend color: 'good', message: "AWX configuration ..."                
