@@ -40,7 +40,7 @@ pipeline {
                         returnStdout: true
                         ).trim()
             }
-    
+
             steps {
                 slackSend color: 'warning', message: "Terraform result:"
                 slackSend color: 'good', message: "Geo Citizen server: ${IP}"
