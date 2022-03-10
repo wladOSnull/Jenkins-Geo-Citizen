@@ -23,7 +23,7 @@ pipeline {
                 sh ("terraform validate");
             }
         }
-        
+
         stage('Terraform action') {
             steps {
                 echo "Terraform pipeline actions is: terraform ${tfaction}"
