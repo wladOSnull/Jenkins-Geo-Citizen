@@ -30,6 +30,7 @@ pipeline {
             steps {
                 slackSend color: 'good', message: "AWX configuration ..."                
                 ansibleTower jobTemplate: 'Geo Citizen workflow', jobType: 'run', templateType: 'workflow', throwExceptionWhenFail: false, towerCredentialsId: '18b16ffa-2c4f-410a-9805-beb077bfe01a', towerLogLevel: 'false', towerServer: 'Geo Citizen AWX'
+                slackSend color: 'good', message: "${currentBuild.currentResult}"                
             }
         }
 
