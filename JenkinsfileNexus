@@ -40,7 +40,7 @@ pipeline {
                 
             }
         }
-        
+
         stage('Get IP of instances') {
             steps {
                 script {
