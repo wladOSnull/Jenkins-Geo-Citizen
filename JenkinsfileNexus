@@ -63,7 +63,7 @@ pipeline {
                                 ls -la
                                 echo ${WORKSPACE}
                                 echo ${JOB_NAME}
-                                ./jenkins/fix.sh ${server} ${db} ${email_login} ${email_pass}
+                                ${WORKSPACE}@script/df8a3407bd151c37d7bcfa114349bb051f1a9d5b68505d9bfebf1e5b89435c3c/jenkins/fix.sh ${server} ${db} ${email_login} ${email_pass}
                             '''
                         }
                     }                    
