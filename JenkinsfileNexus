@@ -62,7 +62,7 @@ pipeline {
                                 pwd
                                 ls -la
                                 echo ${WORKSPACE}
-                                echo ${JOBNAME}
+                                echo ${JOB_NAME}
                                 ./jenkins/fix.sh ${server} ${db} ${email_login} ${email_pass}
                             '''
                         }
