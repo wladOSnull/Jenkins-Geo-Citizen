@@ -10,12 +10,12 @@ pipeline {
 
     stages {
     
-        stage ('Clean current workspace') {
+        /*stage ('Clean current workspace') {
             steps {
                 // remove/reset current workspace directory
-                // deleteDir()
+                deleteDir()
             }
-        }
+        }*/
 
         stage ('Checkout Geo Citizen project') {
             steps {
