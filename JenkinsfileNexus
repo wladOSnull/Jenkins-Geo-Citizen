@@ -13,7 +13,7 @@ pipeline {
         stage ('Clean current workspace') {
             steps {
                 // remove/reset current workspace directory
-                deleteDir()
+                // deleteDir()
             }
         }
 
