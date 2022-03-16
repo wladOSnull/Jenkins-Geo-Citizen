@@ -58,7 +58,7 @@ pipeline {
 
                         script {
 
-                            sh '''
+                            sh '''#!/bin/bash
                                 pwd
                                 ls -la
                                 ./jenkins/fix.sh ${server} ${db} ${email_login} ${email_pass}
