@@ -9,7 +9,7 @@ pipeline {
                 slackSend color: 'good', message: "> *Start pipeline*: ${BUILD_TAG}"
             }
         }
-        
+    
         stage('Terraform repository checkout') {
             steps {
                 slackSend color: 'good', message: "Terraform checkout ..."
