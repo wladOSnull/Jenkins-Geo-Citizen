@@ -1,0 +1,55 @@
+pipeline {
+    
+    agent any
+
+    stages {
+    
+        stage ('Clean current workspace') {
+            steps {
+                // remove/reset current workspace directory
+                deleteDir()
+            }
+        }
+
+        stage('Pull Geo Ciizen .war file') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: '1c43d44e-f7d4-4f31-9c9e-16b0e47650cc', passwordVariable: 'nexus_snap_pass', usernameVariable: 'nexus_snap_user')]) {
+
+                    // get the latest .war file
+                    sh '''
+                    curl -L  \
+                    --output "citizen.war" \
+                    --user "$nexus_snap_user:$nexus_snap_pass" \
+                    "http://35.223.40.57:8081/service/rest/v1/search/assets/download?sort=version&direction=desc&repository=maven-snapshots&maven.groupId=com.softserveinc&maven.artifactId=geo-citizen&maven.baseVersion=1.0.5-SNAPSHOT&maven.extension=war"
+                    '''
+                }
+                
+            }
+        }
+        
+        stage('Get IP of instances') {
+            steps {
+                script {
+                    ip_server = sh(returnStdout: true, script: "gcloud compute instances list --format='value(networkInterfaces.accessConfigs.natIP)' --filter=name:server --zones=us-central1-a | awk -F[\\'\\'] '{print \$2}'").trim()
+                    user_server = sh(returnStdout: true, script: "gcloud compute instances describe server --format='value(metadata.items.value)' --zone=us-central1-a | cut -f1 -d':'").trim()
+                }
+            }
+        }        
+        
+        stage('Push Geo Citizen .war file') {
+            steps {
+                sshagent(['7ff07c78-bb65-4451-ae74-a623933b38d3']) {
+                    
+                    withEnv(["server=$ip_server", "user=$user_server"]) {
+                    
+                        // provide .war to server
+                        sh ("scp -o StrictHostKeyChecking=no citizen.war ${user}@${server}:/home/wlad1324")
+                    
+                        // deploy .war file on Tomcat
+                        sh ("ssh -o StrictHostKeyChecking=no ${user}@${server} sudo mv /home/wlad1324/citizen.war /opt/tomcat/latest/webapps")
+                    }
+                }
+            }
+        }
+    }
+}
