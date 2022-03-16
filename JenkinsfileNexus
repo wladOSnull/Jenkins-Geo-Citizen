@@ -56,7 +56,10 @@ pipeline {
 
                     withEnv(["server=$ip_server", "db=$ip_db"]) {
 
-                        sh './bash/fix.sh ${server} ${db} ${email_login} ${email_pass}'
+                        script {
+
+                            sh './bash/fix.sh ${server} ${db} ${email_login} ${email_pass}'
+                        }
                     }                    
                 }
             }
