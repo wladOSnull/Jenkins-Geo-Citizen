@@ -44,8 +44,11 @@ pipeline {
         stage('Get IP of instances') {
             steps {
                 script {
-                    ip_server = sh(returnStdout: true, script: "gcloud compute instances list --format='value(networkInterfaces.accessConfigs.natIP)' --filter=name:server --zones=us-central1-a | awk -F[\\'\\'] '{print \$2}'").trim()
-                    ip_db = sh(returnStdout: true, script: "gcloud compute instances list --format='value(networkInterfaces.networkIP)' --filter=name:db --zones=us-central1-a").trim()
+                    //ip_server = sh(returnStdout: true, script: "gcloud compute instances list --format='value(networkInterfaces.accessConfigs.natIP)' --filter=name:server --zones=us-central1-a | awk -F[\\'\\'] '{print \$2}'").trim()
+                    ip_server = sh(returnStdout: true, script: "gcloud compute forwarding-rules describe server-frontend-http --global --format='value(IPAddress)'").trim()
+
+                    //ip_db = sh(returnStdout: true, script: "gcloud compute instances list --format='value(networkInterfaces.networkIP)' --filter=name:db --zones=us-central1-a").trim()
+                    ip_db = sh(returnStdout: true, script: "gcloud compute instances list --format='value(networkInterfaces.networkIP)' --filter=labels.instance_type:db --zones=us-central1-a").trim()
                 }
             }
         }
