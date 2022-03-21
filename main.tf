@@ -6,7 +6,7 @@ terraform {
 
     backend "gcs" {
 
-    credentials = "/home/wlados/.gcp/terraform.json"
+//    credentials = "/home/wlados/.gcp/terraform.json"
     
     bucket  = "ssita"
     prefix  = "terraform/terraform_base.tfstate"
@@ -16,7 +16,7 @@ terraform {
 ### account
 provider "google" {
 
-    credentials = "/home/wlados/.gcp/terraform.json"
+//    credentials = "/home/wlados/.gcp/terraform.json"
 
     project = "helical-history-342218"
     region  = "us-central1"
