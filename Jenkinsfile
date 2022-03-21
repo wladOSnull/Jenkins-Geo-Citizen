@@ -26,12 +26,52 @@ pipeline {
             }
         }
 
+        stage ('Rebuild Geo Citizen + DB configuring') {
+            steps {
+                parallel(
+                    a: {
+                        slackSend color: 'good', message: "Rebuild Geo Citizen ..."
+                        build job: 'GitHub-Nexus-Geo-Citizen'                        
+                    },
+                    b: {
+                        slackSend color: 'good', message: "DB configuring ..."                        
+                        ansibleTower(
+                            jobTemplate: 'Geo Citizen db LB', 
+                            jobType: 'run', 
+                            throwExceptionWhenFail: false, 
+                            towerCredentialsId: '', 
+                            towerLogLevel: 'false', 
+                            towerServer: 'Geo Citizen AWX'
+                        )
+                    }
+                )
+            }
+        }
+/*
+        stage ('DB configuring') {
+
+            steps {
+                
+                ansibleTower(
+                    jobTemplate: 'Geo Citizen db LB', 
+                    jobType: 'run', 
+                    throwExceptionWhenFail: false, 
+                    towerCredentialsId: '', 
+                    towerLogLevel: 'false', 
+                    towerServer: 'Geo Citizen AWX'
+                )
+                
+            }
+
+        }        
+
         stage ('Rebuild Geo Citizen with new IPs') {
             steps {
                 slackSend color: 'good', message: "Rebuild Geo Citizen ..."
                 build job: 'GitHub-Nexus-Geo-Citizen'
             }
-        }        
+        }
+*/        
 /*
         stage('AWX configuration') {
             steps {
