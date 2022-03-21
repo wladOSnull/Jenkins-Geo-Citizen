@@ -180,14 +180,6 @@ resource "google_compute_instance_template" "template_db" {
 
   metadata = {
     ssh-keys = "${var.ssh_admin}:${data.google_storage_bucket_object_content.key_db.content}"
-
-    startup-script = <<SCRIPT
-yum update -y
-yum install -y git
-git clone https://github.com/KittyKatt/screenFetch screenfetch
-cp screenfetch/screenfetch-dev /usr/bin/screenfetch
-chmod +x /usr/bin/screenfetch
-      SCRIPT    
   }
 
 }
