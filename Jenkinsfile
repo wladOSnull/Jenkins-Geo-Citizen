@@ -25,6 +25,13 @@ pipeline {
                 sh ("terraform apply --auto-approve");
             }
         }
+
+        stage ('Rebuild Geo Citizen with new IPs') {
+            steps {
+                slackSend color: 'good', message: "Rebuild Geo Citizen ..."
+                build job: 'GitHub-Nexus-Geo-Citizen'
+            }
+        }        
 /*
         stage('AWX configuration') {
             steps {
@@ -53,7 +60,7 @@ pipeline {
 */        
         stage('Slack final message') {
             steps {
-                slackSend color: 'good', message: '> *End pipeline*'
+                slackSend color: 'good', message: "> *End pipeline*"
             }
         }         
         
