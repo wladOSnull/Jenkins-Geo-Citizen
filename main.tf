@@ -170,7 +170,7 @@ resource "google_compute_instance_template" "template_db" {
     boot              = true
     disk_size_gb      = 20
     disk_type         = "pd-ssd"
-#    resource_policies = [google_compute_resource_policy.daily_backup.id]
+    # resource_policies = [google_compute_resource_policy.daily_backup.id]
   }
 
   network_interface {
