@@ -184,8 +184,8 @@ pipeline {
                         ##################################################
 
                         sed -i -E \\
-                                    "s/(front.url=http:\\/\\/localhost)/front.url=http:\\/\\/${G_SERVER_IP}/g; \\
-                                    s/(front-end.url=http:\\/\\/localhost)/front-end.url=http:\\/\\/${G_SERVER_IP}/g; \\
+                                    "s/(front.url=http:\\/\\/localhost:8080)/front.url=http:\\/\\/${G_SERVER_IP}:80/g; \\
+                                    s/(front-end.url=http:\\/\\/localhost:8080)/front-end.url=http:\\/\\/${G_SERVER_IP}:80/g; \\
 
                                     s/(db.url=jdbc:postgresql:\\/\\/localhost)/db.url=jdbc:postgresql:\\/\\/${G_DB_IP}/g;
                                     s/(db.username=postgres)/db.username=${G_DB_USERNAME}/g;
