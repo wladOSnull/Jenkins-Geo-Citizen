@@ -263,7 +263,7 @@ resource "google_compute_autoscaler" "autoscaler_servers" {
 resource "google_compute_global_forwarding_rule" "server_forward" {
   name       = "server-frontend-http"
   target     = google_compute_target_http_proxy.server_proxy.self_link
-  port_range = "8080"
+  port_range = "80"
 }
 
 ### HTTP target proxy
