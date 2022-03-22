@@ -178,7 +178,7 @@ pipeline {
                         sed -i \'s/\\/src\\/assets/.\\/static/g\' src/main/webapp/"index.html"
 
                         ### wrong back-end in minificated .js files
-                        find ./src/main/webapp/static/js/ -type f -exec sed -i "s/localhost/${G_SERVER_IP}/g" {} +
+                        find ./src/main/webapp/static/js/ -type f -exec sed -i "s/localhost:8080/${G_SERVER_IP}:80/g" {} +
 
                         ### fixing properties of the project deployment
                         ##################################################
