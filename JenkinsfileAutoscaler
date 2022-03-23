@@ -31,7 +31,7 @@ pipeline {
 
         }
         
-        
+        /*
         stage('Pull Geo Ciizen .war file') {
             steps {
                 withCredentials([usernamePassword(credentialsId: '1c43d44e-f7d4-4f31-9c9e-16b0e47650cc', passwordVariable: 'nexus_snap_pass', usernameVariable: 'nexus_snap_user')]) {
@@ -48,8 +48,38 @@ pipeline {
                 
             }
         }
+*/
+        stage('Pull the latest docker geo-image') {
+            steps {
+
+                withCredentials([usernamePassword(credentialsId: "${registryCreds}", passwordVariable: 'nexus_docker_pass', usernameVariable: 'nexus_docker_user')]) {
+                    
+                    script {
+                        slackSend color: 'good', message: "Get the latest geo-app"                      
+
+                        last_tag = sh(returnStdout: true, script: """curl --user '$nexus_docker_user:$nexus_docker_pass' -sX GET http://35.223.40.57:8085/v2/citizen/tags/list | jq '.tags[-1]' | awk -F[\\"\\"] '{print \$2}' """).trim()
+                    }
+                    echo last_tag
+                }
+                
+                script {                    
+                    docker.withRegistry("http://"+registry, registryCreds) {
+                        sh("docker image pull ${registry}citizen:${last_tag}")
+                    }
+                }
+                
+                sh("docker save -o ./citizen.tar ${registry}citizen:${last_tag}")
+                
+            }
+        }
         
-        stage('Push Geo Citizen .war file') {
+        stage ('Clean all images') {
+            steps {
+                sh("docker rmi -f \$(docker images '*/citizen' --format '{{.ID}}')")
+            }
+        }       
+        
+        stage('Deploy geo-images to geo-server') {
             steps {
                 sshagent(['7ff07c78-bb65-4451-ae74-a623933b38d3']) {
                     
@@ -60,10 +90,10 @@ pipeline {
                         def user = "wlad1324"
                             
                         // provide .war to server
-                        sh ("scp -o StrictHostKeyChecking=no citizen.war ${user}@${host}:/home/wlad1324")
+                        sh ("scp -o StrictHostKeyChecking=no citizen.tar ${user}@${host}:/home/${user}")
                 
                         // deploy .war file on Tomcat
-                        sh ("ssh -o StrictHostKeyChecking=no ${user}@${host} sudo mv /home/wlad1324/citizen.war /opt/tomcat/latest/webapps")
+                        sh ("ssh -o StrictHostKeyChecking=no ${user}@${host} sudo docker load < /home/${user}/citizen.tar && docker run -p 8080:8080 ${registry}citizen:${last_tag}")
                             
                     }
                 }

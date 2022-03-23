@@ -6,6 +6,11 @@ pipeline {
 
     environment {
         PATH = "/opt/maven/bin:$PATH"
+        
+        imageName = "citizen"
+        registryCreds = "7f3b1543-24a9-4e22-8690-2b4329038ac2"
+        registry = "35.223.40.57:8085/"
+        dockerImage = ""
     }
 
     stages {
@@ -211,23 +216,40 @@ pipeline {
                 sh("mvn clean install")
             }
         }
-
+        
         stage('Deploy Geo Citizen with Maven (pom.xml) to Nexus') {
             steps {
                 slackSend color: 'good', message: "Geo-project deploy to Nexus ..."
                 sh("mvn deploy")
             }
-        }
+        }        
 
-        stage('Slack final message') {
+        stage ('Geo-app dockerization') {
             steps {
-                slackSend color: 'good', message: "${currentBuild.durationString}"
-                slackSend color: 'good', message: "${currentBuild.currentResult}"                
-                slackSend color: 'good', message: "> *End pipeline*"
+                script {
+                slackSend color: 'good', message: "Geo-app dockerization ..."                    
+                    dockerImage = docker.build("${imageName}:${env.BUILD_ID}")
+                }
             }
-        }         
-
-    }
-}
-
-
+        }
+        
+        stage ('Upload dockerized geo-app to Nexus') {
+            steps {
+                
+                slackSend color: 'good', message: "Geo-image deploy to Nexus ..."
+                
+                script {
+                    docker.withRegistry("http://"+registry, registryCreds) {
+                        dockerImage.push("${env.BUILD_ID}")
+                    }
+                }
+            }
+        }
+        
+        stage ('Clean all builds') {
+            steps {
+                script {
+                    sh("docker rmi -f \$(docker images '*citizen*' --format '{{.ID}}')")
+                }
+            }
+        }
