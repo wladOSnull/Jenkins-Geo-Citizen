@@ -2,6 +2,10 @@ pipeline {
     
     agent any
 
+    environment {        
+        registry = "35.223.40.57:8085/"
+    }     
+
     stages {
     
         stage ('Clean current workspace') {
@@ -11,7 +15,7 @@ pipeline {
                 deleteDir()
             }
         }
-
+/*
         stage('Pull Geo Ciizen .war file') {
             steps {
 
@@ -67,6 +71,73 @@ pipeline {
                 }
             }
         }
+*/
+        stage('Get IP of instances') {
+            steps {
+
+                slackSend color: 'warning', message: "Get user:host for provisioning"
+
+                script {
+                    ip_server = sh(returnStdout: true, script: "gcloud compute instances list --format='value(networkInterfaces.accessConfigs.natIP)' --filter=labels.instance_type:server --zones=us-central1-a | awk -F[\\'\\'] '{print \$2}'").trim()
+                    //user_server = sh(returnStdout: true, script: "gcloud compute instances describe server --format='value(metadata.items.value)' --zone=us-central1-a | cut -f1 -d':'").trim()
+                    user_server = sh(returnStdout: true, script:"echo wlad1324").trim()
+                }
+            }
+        }        
+
+        stage('Pull the latest docker geo-image') {
+            steps {
+
+                withCredentials([usernamePassword(credentialsId: "${registryCreds}", passwordVariable: 'nexus_docker_pass', usernameVariable: 'nexus_docker_user')]) {
+                    
+                    script {
+                        slackSend color: 'good', message: "Get the latest geo-app"                      
+
+                        last_tag = sh(returnStdout: true, script: """curl --user '$nexus_docker_user:$nexus_docker_pass' -sX GET http://35.223.40.57:8085/v2/citizen/tags/list | jq '.tags[-1]' | awk -F[\\"\\"] '{print \$2}' """).trim()
+                    }
+                    echo last_tag
+                }
+                
+                script {                    
+                    docker.withRegistry("http://"+registry, registryCreds) {
+                        sh("docker image pull ${registry}citizen:${last_tag}")
+                    }
+                }
+                
+                sh("docker save -o ./citizen.tar ${registry}citizen:${last_tag}")
+                
+            }
+        }
+        
+        stage ('Clean all images') {
+            steps {
+                sh("docker rmi -f \$(docker images '*/citizen' --format '{{.ID}}')")
+            }
+        }       
+
+        stage('Push Docker geo-image') {
+            steps {
+
+                slackSend color: 'warning', message: "Provision new geo-image for each geo-server ..."
+
+                sshagent(['7ff07c78-bb65-4451-ae74-a623933b38d3']) {
+                    
+                    withEnv(["server=$ip_server", "user=$user_server"]) {
+                    
+                        script {
+                            
+                            server.tokenize("\n").each { host ->
+                                
+                                sh ("scp -o StrictHostKeyChecking=no citizen.tar ${user}@${host}:/home/${user}")
+                
+                                sh ("ssh -o StrictHostKeyChecking=no ${user}@${host} 'sudo docker load < /home/${user}/citizen.tar'")
+                                sh ("ssh -o StrictHostKeyChecking=no ${user}@${host} 'sudo docker run -d -p 8080:8080 ${registry}citizen:${last_tag}'")
+                            }
+                        }
+                    }
+                }
+            }
+        }                
 
         stage('Slack final message') {
             steps {
