@@ -20,6 +20,7 @@ pipeline {
         stage ('New server configuring') {
 
             steps {
+                echo $host
                 slackSend color: 'warning', message: "Geo-server configuring ..."                  
                 ansibleTower(
                     extraVars: '''---
