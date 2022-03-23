@@ -253,3 +253,14 @@ pipeline {
                 }
             }
         }
+
+
+        stage('Slack final message') {
+            steps {
+                slackSend color: 'good', message: "${currentBuild.durationString}"
+                slackSend color: 'good', message: "${currentBuild.currentResult}"                
+                slackSend color: 'good', message: "> *End pipeline*"
+            }
+        }     
+    }
+}
