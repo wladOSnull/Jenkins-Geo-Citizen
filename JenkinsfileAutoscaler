@@ -25,7 +25,7 @@ pipeline {
                 ansibleTower(
                     extraVars: '''---
                     var_host: ${host}''', 
-                    jobTemplate: 'Geo Citizen server LB Docker', 
+                    jobTemplate: 'Geo Citizen server LB', 
                     jobType: 'run', 
                     throwExceptionWhenFail: false, 
                     towerCredentialsId: '', 
