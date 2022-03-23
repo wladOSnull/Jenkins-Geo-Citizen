@@ -233,7 +233,7 @@ resource "google_compute_instance_group_manager" "server_group" {
 
   auto_healing_policies {
     health_check      = google_compute_health_check.health_8080.id
-    initial_delay_sec = 360
+    initial_delay_sec = 420
   }
 }
 
@@ -247,7 +247,7 @@ resource "google_compute_autoscaler" "autoscaler_servers" {
   autoscaling_policy {
     max_replicas    = 3
     min_replicas    = 1
-    cooldown_period = 360
+    cooldown_period = 420
 
     cpu_utilization {
       target = 0.75
