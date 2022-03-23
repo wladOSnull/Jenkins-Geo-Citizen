@@ -98,7 +98,8 @@ pipeline {
                         sh ("scp -o StrictHostKeyChecking=no citizen.tar ${user}@${host}:/home/${user}")
                 
                         // deploy .war file on Tomcat
-                        sh ("ssh -o StrictHostKeyChecking=no ${user}@${host} sudo docker load < /home/${user}/citizen.tar && docker run -it -p 8080:8080 ${registry}citizen:${last_tag}")
+                        sh ("ssh -o StrictHostKeyChecking=no ${user}@${host} 'sudo docker load < /home/${user}/citizen.tar' && docker run -it -p 8080:8080 ${registry}citizen:${last_tag}")
+                        sh ("ssh -o StrictHostKeyChecking=no ${user}@${host} 'sudo docker run -it -p 8080:8080 ${registry}citizen:${last_tag}'")
                             
                     }
                 }
