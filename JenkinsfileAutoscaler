@@ -2,6 +2,11 @@ pipeline {
     
     agent any
 
+    environment {        
+        registryCreds = "7f3b1543-24a9-4e22-8690-2b4329038ac2"
+        registry = "35.223.40.57:8085/"
+    }    
+
     stages {
 
         stage ('Clean current workspace') {
@@ -19,7 +24,7 @@ pipeline {
                 ansibleTower(
                     extraVars: '''---
                     var_host: ${host}''', 
-                    jobTemplate: 'Geo Citizen server LB', 
+                    jobTemplate: 'Geo Citizen server LB Docker', 
                     jobType: 'run', 
                     throwExceptionWhenFail: false, 
                     towerCredentialsId: '', 
@@ -93,7 +98,7 @@ pipeline {
                         sh ("scp -o StrictHostKeyChecking=no citizen.tar ${user}@${host}:/home/${user}")
                 
                         // deploy .war file on Tomcat
-                        sh ("ssh -o StrictHostKeyChecking=no ${user}@${host} sudo docker load < /home/${user}/citizen.tar && docker run -p 8080:8080 ${registry}citizen:${last_tag}")
+                        sh ("ssh -o StrictHostKeyChecking=no ${user}@${host} sudo docker load < /home/${user}/citizen.tar && docker run -it -p 8080:8080 ${registry}citizen:${last_tag}")
                             
                     }
                 }
