@@ -130,7 +130,7 @@ pipeline {
                             server.tokenize("\n").each { host ->
                                 
                                 sh ("scp -o StrictHostKeyChecking=no citizen.tar ${user}@${host}:/home/${user}")
-                                sh ("ssh -o StrictHostKeyChecking=no ${user}@${host} 'sudo docker kill $(docker ps -q)'")
+                                sh ("ssh -o StrictHostKeyChecking=no ${user}@${host} 'sudo docker kill \$(docker ps -q)'")
                                 sh ("ssh -o StrictHostKeyChecking=no ${user}@${host} 'sudo docker load < /home/${user}/citizen.tar'")
                                 sh ("ssh -o StrictHostKeyChecking=no ${user}@${host} 'sudo docker run -d -p 8080:8080 ${registry}citizen:${last_tag}'")
                             }
