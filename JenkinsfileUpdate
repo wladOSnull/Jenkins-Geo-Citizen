@@ -4,6 +4,7 @@ pipeline {
 
     environment {        
         registry = "35.223.40.57:8085/"
+        registryCreds = "7f3b1543-24a9-4e22-8690-2b4329038ac2"
     }     
 
     stages {
