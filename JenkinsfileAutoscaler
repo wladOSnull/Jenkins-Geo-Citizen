@@ -78,11 +78,11 @@ pipeline {
             }
         }
         
-        stage ('Clean all images') {
-            steps {
-                sh("docker rmi -f \$(docker images '*/citizen' --format '{{.ID}}')")
-            }
-        }       
+        //stage ('Clean all images') {
+        //    steps {
+        //        sh("docker rmi -f \$(docker images '*/citizen' --format '{{.ID}}')")
+        //    }
+        //}       
         
         stage('Deploy geo-images to geo-server') {
             steps {
