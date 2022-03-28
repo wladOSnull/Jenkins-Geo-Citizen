@@ -10,51 +10,40 @@ pipeline {
             }
         }
     
-        stage('Terraform repository checkout') {
+        stage('Terragrunt repository checkout') {
             steps {
-                slackSend color: 'good', message: "Terraform checkout ..."
+                slackSend color: 'good', message: "Terragrunt checkout ..."
                 checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/wladOSnull/Terraform-Geo-Citizen']]])
             }
         }
         
-        stage('Terraform init') {
+        stage('Terragrunt init') {
             steps {
-                sh ("terraform init");
-                sh ("terraform validate");
+                sh'''
+                    cd geo_terragrunt/deployments
+                    terragrunt init
+                    terragrunt validate
+                '''
             }
         }
 
-        stage('Terraform action') {
+        stage('Terragrunt action') {
             steps {
-                echo "Terraform pipeline actions is: terraform ${tfaction}"
-                slackSend color: 'warning', message: "Terraform action: ${tfaction}"
-                sh ("terraform ${tfaction} --auto-approve");
+                echo "Terragrunt pipeline actions is: terraform ${tfaction}"
+                slackSend color: 'warning', message: "Terragrunt action: ${tfaction}"
+                sh"""
+                    cd geo_terragrunt/deployments
+                    yes | terragrunt run-all ${tfaction}
+                """
             }
         }
 
         stage('Slack result message') {
             
             steps {
-                slackSend color: 'warning', message: "Terraform result:"                
+                slackSend color: 'warning', message: "Terragrunt result:"                
             }
         }        
-
-        stage('Slack IP message') {
-
-            environment {
-                IP = sh (
-                        script: "terraform output -raw server-external-ip", 
-                        returnStdout: true
-                        ).trim()
-            }
-
-            when {
-                expression { tfaction ==~ /(apply)/ }
-            }
-            steps {
-                slackSend color: 'good', message: "Geo Citizen server: ${IP}"
-            }
-        }
  
         stage('Slack result detail message') {
             steps {
