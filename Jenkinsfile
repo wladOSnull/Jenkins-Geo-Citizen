@@ -10,19 +10,21 @@ pipeline {
             }
         }        
 
-        stage('Terraform repository checkout') {
+        stage('Terragrunt repository checkout') {
             steps {
-                slackSend color: 'good', message: "Terraform checkout"                
+                slackSend color: 'good', message: "Terragrunt checkout"                
                 checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/wladOSnull/Jenkins-Terraform-Geo-Citizen']]])
             }
         }
         
-        stage('Terraform build') {
+        stage('Terragrunt build') {
             steps {
-                slackSend color: 'good', message: "Terraform build ..."                
-                sh ("terraform init");
-                sh ("terraform validate");
-                sh ("terraform apply --auto-approve");
+                slackSend color: 'good', message: "Terragrunt build ..."                
+                sh'''
+                    cd geo_terragrunt/deployments
+                    terragrunt init
+                    terragrunt run-all apply
+                '''
             }
         }
 
