@@ -1,7 +1,6 @@
 locals {
     bucket = "ssita"
     prefix  = "terraform/geo_terragrunt"
-    credentials = "/home/wlados/.gcp/terraform.json"
 
     project = "helical-history-342218"
     region  = "us-central1"
@@ -21,7 +20,6 @@ remote_state {
     }
 
     config = {
-        credentials = local.credentials
         bucket = local.bucket
         prefix  = local.prefix
     }
@@ -35,7 +33,6 @@ generate "provider" {
     contents = <<EOF
 
 provider "google" { 
-    credentials = "${local.credentials}"
     project = "${local.project}"
     region  = "${local.region}"
     zone    = "${local.zone}"
