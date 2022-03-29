@@ -21,9 +21,9 @@ pipeline {
             steps {
                 slackSend color: 'good', message: "Terragrunt build ..."                
                 sh'''
-                    cd geo_terragrunt/deployments
+                    cd geo_terragrunt/deployments/prod
                     terragrunt init
-                    yes | terragrunt run-all apply
+                    yes | terragrunt apply
                 '''
             }
         }
