@@ -32,8 +32,8 @@ pipeline {
                 echo "Terragrunt pipeline actions is: terraform ${tfaction}"
                 slackSend color: 'warning', message: "Terragrunt action: ${tfaction}"
                 sh"""
-                    cd geo_terragrunt/deployments
-                    yes | terragrunt run-all ${tfaction}
+                    cd geo_terragrunt/deployments/prod
+                    yes | terragrunt ${tfaction}
                 """
             }
         }
