@@ -33,7 +33,7 @@ pipeline {
                 slackSend color: 'warning', message: "Terragrunt action: ${tfaction}"
                 sh"""
                     cd geo_terragrunt/deployments/prod
-                    yes | terragrunt ${tfaction}
+                    terragrunt ${tfaction} -auto-approve
                 """
             }
         }

@@ -23,7 +23,7 @@ pipeline {
                 sh'''
                     cd geo_terragrunt/deployments/prod
                     terragrunt init
-                    yes | terragrunt apply
+                    terragrunt apply -auto-approve
                 '''
             }
         }
