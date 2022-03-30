@@ -45,6 +45,6 @@ resource "google_compute_firewall" "firewall_server_db" {
 
 	allow {
 		protocol = "tcp"
-		ports    = ["22"]
+		ports    = ["22", "9100"]
 	}
 }
