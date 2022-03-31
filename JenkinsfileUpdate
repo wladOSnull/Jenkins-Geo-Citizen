@@ -94,7 +94,7 @@ pipeline {
                     script {
                         slackSend color: 'good', message: "Get the latest geo-app"                      
 
-                        last_tag = sh(returnStdout: true, script: """curl --user '$nexus_docker_user:$nexus_docker_pass' -sX GET http://35.223.40.57:8085/v2/citizen/tags/list | jq '.tags[-1]' | awk -F[\\"\\"] '{print \$2}' """).trim()
+                        last_tag = sh(returnStdout: true, script: """curl --user '$nexus_docker_user:$nexus_docker_pass' -sX GET http://35.223.40.57:8085/v2/citizen/tags/list | jq '.tags | sort_by(length) | .[-1]' | awk -F[\\"\\"] '{print \$2}' """).trim()
                     }
                     echo last_tag
                 }
