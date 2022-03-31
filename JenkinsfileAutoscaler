@@ -5,6 +5,7 @@ pipeline {
     environment {        
         registryCreds = "7f3b1543-24a9-4e22-8690-2b4329038ac2"
         registry = "35.223.40.57:8085/"
+        sensu_backend_url = "35.226.240.92:8091"
     }    
 
     stages {
@@ -23,7 +24,8 @@ pipeline {
                 slackSend color: 'warning', message: "Geo-server configuring ..."                  
                 ansibleTower(
                     extraVars: '''---
-                    var_host: ${host}''', 
+                    var_host: ${host}
+                    sensu_backend: ${sensu_backend_url}''', 
                     jobTemplate: 'Geo Citizen server LB', 
                     jobType: 'run', 
                     throwExceptionWhenFail: false, 

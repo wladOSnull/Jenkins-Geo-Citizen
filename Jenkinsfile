@@ -2,6 +2,10 @@ pipeline {
     
     agent any
 
+    environment {
+        sensu_backend_url = "35.226.240.92:8091"
+    }     
+
     stages {
 
         stage('Slack initial message') {
@@ -38,6 +42,8 @@ pipeline {
                     b: {
                         slackSend color: 'warning', message: "DB configuring ..."                        
                         ansibleTower(
+                            extraVars: '''---
+                            sensu_backend: ${sensu_backend_url}''',                             
                             jobTemplate: 'Geo Citizen db LB', 
                             jobType: 'run', 
                             throwExceptionWhenFail: false, 
